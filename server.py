@@ -28,7 +28,7 @@ def start_server():
             if not message:
                 continue
 
-            # --- HANDLE DOWNLOAD (GET) ---
+            # allows us to download files
             if message.startswith("GET"):
                 _, filename = message.split(SEPARATOR)
                 if os.path.exists(filename):
@@ -36,8 +36,7 @@ def start_server():
                     # Send the size first
                     client_socket.send(f"{filesize}".encode())
                     
-                    # CRITICAL FIX: Wait 0.1 seconds so the size and data 
-                    # don't arrive at the client at the same time.
+                    # Wait 0.1 seconds so the size and data don't arrive at the client at the same time.
                     time.sleep(0.1)
                     
                     with open(filename, "rb") as f:
@@ -50,7 +49,7 @@ def start_server():
                 else:
                     client_socket.send(b"ERROR: File not found")
 
-            # --- HANDLE UPLOAD (SEND) ---
+            # allows us to upload files
             elif message.startswith("SEND"):
                 _, filename, filesize = message.split(SEPARATOR)
                 filename = os.path.basename(filename)
